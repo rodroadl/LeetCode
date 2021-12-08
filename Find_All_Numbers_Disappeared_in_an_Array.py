@@ -4,13 +4,15 @@
     return an array of all the integers in the range [1, n] that do not appear in nums.'''
 class Solution:
     def findDisappearedNumbers(self, nums: list[int]) -> list[int]:
-        ref = set()
-        for i in range(len(nums)):
-            ref.add(i + 1)
-        set_nums = set(nums)
-        result  = list(ref.difference(set_nums))
-        result.sort()
-        return result
+        nums.sort()
+        res = []
+        i = 0
+        add_num = 1
+        while i < len(nums):
+            if nums[i] != add_num and add_num > i + 1:
+                res.append(add_num)
+        return res
+            
         
             
 def main():
