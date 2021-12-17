@@ -15,37 +15,64 @@
 
 class Solution:
     def openLock(self, deadends: list[str], target: str) -> int:
-        curr = '0000'
-        min_turns = 40000
-        turns = 0
-        self.bfs(curr, turns, min_turns, target)
-        if min_turns != 40000:
-            return min_turns
-        else:
+        if '0000' in deadends:
             return -1
-    
-    def bfs(self, curr, turns, min_turns, target):
-        if curr == target:
-            return turns
-        if turns > min_turns:
-            return 40000
+
+        temp = {str((int(target[0]) + 1) % 10) + target[1:],
+        str((int(target[0]) - 1) % 10) + target[1:],
+        target[0] + str((int(target[1]) + 1) % 10) + target[2:],
+        target[0] + str((int(target[1]) - 1) % 10) + target[2:],
+        target[:2] + str((int(target[2]) + 1) % 10) + target[3:],
+        target[:2] + str((int(target[2]) - 1) % 10) + target[3:],
+        target[:3] + str((int(target[3]) + 1) % 10),
+        target[:3] + str((int(target[3]) - 1) % 10)}
+
+        if set(deadends) == temp:
+            return -1
+
+        min_turns = 400
+        turns = 0
+        queue = [(target, 0)]
+
+        while queue and turns < min_turns:
+            curr, turns = queue.pop(0)
+
+            if curr == '0000':
+                if turns < min_turns:
+                    min_turns = turns
+                return min_turns
+
+            deadends.append(curr)
+            if str((int(curr[0]) + 1) % 10) + curr[1:] not in deadends:
+                queue.append((str((int(curr[0]) + 1) % 10) + curr[1:], turns + 1))
+            if str((int(curr[0]) - 1) % 10) + curr[1:] not in deadends:
+                queue.append((str((int(curr[0]) - 1) % 10) + curr[1:], turns + 1))
+            if curr[0] + str((int(curr[1]) + 1) % 10) + curr[2:] not in deadends:
+                queue.append((curr[0] + str((int(curr[1]) + 1) % 10) + curr[2:], turns + 1))
+            if curr[0] + str((int(curr[1]) - 1) % 10) + curr[2:] not in deadends:
+                queue.append((curr[0] + str((int(curr[1]) - 1) % 10) + curr[2:], turns + 1))
+            if curr[:2] + str((int(curr[2]) + 1) % 10) + curr[3:] not in deadends:
+                queue.append((curr[:2] + str((int(curr[2]) + 1) % 10) + curr[3], turns + 1))
+            if curr[:2] + str((int(curr[2]) - 1) % 10) + curr[3:] not in deadends:
+                queue.append((curr[:2] + str((int(curr[2]) - 1) % 10) + curr[3], turns + 1))
+            if curr[:3] + str((int(curr[3]) + 1) % 10) not in deadends:
+                queue.append((curr[:3] + str((int(curr[3]) + 1) % 10), turns + 1))
+            if curr[:3] + str((int(curr[3]) - 1) % 10) not in deadends:
+                queue.append((curr[:3] + str((int(curr[3]) - 1) % 10), turns + 1))
+
+        print(deadends)
+        if min_turns == 40000:
+            return -1
         else:
-            self.bfs(str((int(curr[0]) + 1) % 10) + curr[1:], turns + 1, min_turns, target)
-            self.bfs(str((int(curr[0]) - 1) % 10) + curr[1:], turns + 1, min_turns, target)
-            self.bfs(curr[0] + str((int(curr[1]) + 1) % 10) + curr[2:], turns + 1, min_turns, target)
-            self.bfs(curr[0] + str((int(curr[1]) - 1) % 10) + curr[2:], turns + 1, min_turns, target)
-            self.bfs(curr[:2] + str((int(curr[2]) + 1) % 10) + curr[3:], turns + 1, min_turns, target)
-            self.bfs(curr[:2] + str((int(curr[2]) - 1) % 10) + curr[3:], turns + 1, min_turns, target)
-            self.bfs(curr[:3] + str((int(curr[3]) + 1) % 10), turns + 1, min_turns, target)
-            self.bfs(curr[:3] + str((int(curr[3]) - 1) % 10), turns + 1, min_turns, target)
-            
+            return min_turns
 
 
 def main():
     sol = Solution()
-    print(sol.openLock(['9999'], '1000'))
-    # print(sol.openLock(["0201","0101","0102","1212","2002"], '0202'))
-    
+    print(sol.openLock(['8888'], '0009'))
+    print(sol.openLock(["0201","0101","0102","1212","2002"], '0202'))
+    print(sol.openLock(deadends = ["8887","8889","8878","8898","8788","8988","7888","9888"], target = "8888"))
+    print(sol.openLock(deadends = ["0000"], target = "8888"))
 
 if __name__ == '__main__':
     main()
