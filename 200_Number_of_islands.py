@@ -9,68 +9,53 @@ class Solution:
     def numIslands(self, grid: list[list[str]]) -> int:
         rows = len(grid)
         cols = len(grid[0])
-        hash = []
-        for i in range(rows):
-            temp = []
-            for j in range(cols):
-                temp.append(0)
-            hash.append(temp)
         queue = []
         num_of_islands = 0
-        min_row = 0
-        col = 0
-        while True:
-            conti= False
-            row = min_row
-            while row < rows:
-                while col < cols:
-                    if hash[row][col] == 0:
-                        if row - 1 < 0:
-                            min_row = 0
-                        else:
-                            min_row = row -1
-                        break
-                    col += 1
-                if col < cols and hash[row][col] == 0:
-                    break
-                col = 0
-                row += 1
-            if row == rows:
-                return num_of_islands
-            queue.append((row, col))
-            while queue:
-                row, col = queue.pop(0)
-                if not hash[row][col]:
-                    hash[row][col] = 1
-                    if grid[row][col] == '1':
-                        if not conti:
-                            num_of_islands += 1
-                            conti = True
-                        if row - 1 >= 0 and hash[row - 1][col] == 0 and (row - 1, col) not in queue:
-                            queue.append((row - 1, col))
-                        if col - 1 >= 0 and hash[row][col - 1] == 0 and (row, col - 1) not in queue:
-                            queue.append((row, col - 1))
-                        if row + 1 < rows and hash[row + 1][col] == 0 and (row + 1, col) not in queue:
-                            queue.append((row + 1, col))
-                        if col + 1 < cols and hash[row][col + 1] == 0 and (row, col + 1) not in queue:
-                            queue.append((row, col + 1))
+        outer_row = 0
+        outer_col = 0
+        while outer_row < rows:
+            while outer_col < cols:
 
+                if grid[outer_row][outer_col] == '1':
+                    queue.append((outer_row, outer_col))
+                    grid[outer_row][outer_col] = 0
+                    num_of_islands += 1
+                    while queue:
+                        row, col = queue.pop(0)
+                        if row - 1 >= 0 and grid[row - 1][col] == '1':
+                            queue.append((row - 1, col))
+                            grid[row - 1][col] = 0
+                        if col - 1 >= 0 and grid[row][col - 1] == '1':
+                            queue.append((row, col - 1))
+                            grid[row][col - 1] = 0
+                        if row + 1 < rows and grid[row + 1][col] == '1':
+                            queue.append((row + 1, col))
+                            grid[row + 1][col] = 0
+                        if col + 1 < cols and grid[row][col + 1] == '1':
+                            queue.append((row, col + 1))
+                            grid[row][col + 1] = 0
+                
+
+                outer_col += 1
+            outer_col = 0
+            outer_row += 1
+        return num_of_islands
 def main():
     sol = Solution()
-#     print(sol.numIslands([
-#   ["1","1","1","1","0"],
-#   ["1","1","0","1","0"],
-#   ["1","1","0","0","0"],
-#   ["0","0","0","0","0"]
-# ]))
-#     print(sol.numIslands([
-#   ["1","1","0","0","0"],
-#   ["1","1","0","0","0"],
-#   ["0","0","1","0","0"],
-#   ["0","0","0","1","1"]
-# ]))
-#     print(sol.numIslands([["0","1","0"],["1","0","1"],["0","1","0"]]))
-#     print(sol.numIslands([["1","1","1"],["0","1","0"],["1","1","1"]]))
+    print(sol.numIslands([
+  ["1","1","1","1","0"],
+  ["1","1","0","1","0"],
+  ["1","1","0","0","0"],
+  ["0","0","0","0","0"]
+]))
+    print(sol.numIslands([
+  ["1","1","0","0","0"],
+  ["1","1","0","0","0"],
+  ["0","0","1","0","0"],
+  ["0","0","0","1","1"]
+]))
+    print(sol.numIslands([["0","1","0"],["1","0","1"],["0","1","0"]]))
+    print(sol.numIslands([["1","1","1"],["0","1","0"],["1","1","1"]]))
     print(sol.numIslands([["1","0","0","1","1","1","0","1","1","0","0","0","0","0","0","0","0","0","0","0"],["1","0","0","1","1","0","0","1","0","0","0","1","0","1","0","1","0","0","1","0"],["0","0","0","1","1","1","1","0","1","0","1","1","0","0","0","0","1","0","1","0"],["0","0","0","1","1","0","0","1","0","0","0","1","1","1","0","0","1","0","0","1"],["0","0","0","0","0","0","0","1","1","1","0","0","0","0","0","0","0","0","0","0"],["1","0","0","0","0","1","0","1","0","1","1","0","0","0","0","0","0","1","0","1"],["0","0","0","1","0","0","0","1","0","1","0","1","0","1","0","1","0","1","0","1"],["0","0","0","1","0","1","0","0","1","1","0","1","0","1","1","0","1","1","1","0"],["0","0","0","0","1","0","0","1","1","0","0","0","0","1","0","0","0","1","0","1"],["0","0","1","0","0","1","0","0","0","0","0","1","0","0","1","0","0","0","1","0"],["1","0","0","1","0","0","0","0","0","0","0","1","0","0","1","0","1","0","1","0"],["0","1","0","0","0","1","0","1","0","1","1","0","1","1","1","0","1","1","0","0"],["1","1","0","1","0","0","0","0","1","0","0","0","0","0","0","1","0","0","0","1"],["0","1","0","0","1","1","1","0","0","0","1","1","1","1","1","0","1","0","0","0"],["0","0","1","1","1","0","0","0","1","1","0","0","0","1","0","1","0","0","0","0"],["1","0","0","1","0","1","0","0","0","0","1","0","0","0","1","0","1","0","1","1"],["1","0","1","0","0","0","0","0","0","1","0","0","0","1","0","1","0","0","0","0"],["0","1","1","0","0","0","1","1","1","0","1","0","1","0","1","1","1","1","0","0"],["0","1","0","0","0","0","1","1","0","0","1","0","1","0","0","1","0","0","1","1"],["0","0","0","0","0","0","1","1","1","1","0","1","0","0","0","1","1","0","0","0"]]))
 if __name__ == '__main__':
     main()
