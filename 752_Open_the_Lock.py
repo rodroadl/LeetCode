@@ -15,64 +15,69 @@
 
 class Solution:
     def openLock(self, deadends: list[str], target: str) -> int:
+        grid = []
+        queue = [(int(target),0)]
+        min_turns = 40000
+        turns = 0
+        target = int(target)
+
         if '0000' in deadends:
             return -1
 
-        temp = {str((int(target[0]) + 1) % 10) + target[1:],
-        str((int(target[0]) - 1) % 10) + target[1:],
-        target[0] + str((int(target[1]) + 1) % 10) + target[2:],
-        target[0] + str((int(target[1]) - 1) % 10) + target[2:],
-        target[:2] + str((int(target[2]) + 1) % 10) + target[3:],
-        target[:2] + str((int(target[2]) - 1) % 10) + target[3:],
-        target[:3] + str((int(target[3]) + 1) % 10),
-        target[:3] + str((int(target[3]) - 1) % 10)}
+        for i in range(len(deadends)):
+            deadends[i] = int(deadends[i])
 
-        if set(deadends) == temp:
-            return -1
-
-        min_turns = 400
-        turns = 0
-        queue = [(target, 0)]
-
+        for i in range(10000):
+            if i in deadends:
+                grid.append(0)
+            else:
+                grid.append(1)
+        
+        grid[target] = 0
         while queue and turns < min_turns:
             curr, turns = queue.pop(0)
+            
 
-            if curr == '0000':
+            if curr == 0:
                 if turns < min_turns:
                     min_turns = turns
-                return min_turns
+            
+            if grid[(curr // 10) * 10 + ((curr % 10) + 1) % 10] == 1:
+                queue.append(((curr // 10) * 10 + ((curr % 10) + 1) % 10, turns + 1))
+                grid[(curr // 10) * 10 + ((curr % 10) + 1) % 10] = 0
+            if grid[(curr // 10) * 10 + ((curr % 10) - 1) % 10] == 1:
+                queue.append(((curr // 10) * 10 + ((curr % 10) - 1) % 10, turns + 1))
+                grid[(curr // 10) * 10 + ((curr % 10) - 1) % 10] = 0
+            if grid[(curr // 100) * 100 + ((curr % 100) - (curr % 10) + 10) % 100 + curr % 10] == 1:
+                queue.append(((curr // 100) * 100 + ((curr % 100) - ((curr % 100) % 10) + 10) % 100 + curr % 10, turns + 1))
+                grid[(curr // 100) * 100 + ((curr % 100) - (curr % 10) + 10) % 100 + curr % 10] = 0
+            if grid[(curr // 100) * 100 + ((curr % 100) - (curr % 10) - 10) % 100 + curr % 10] == 1:
+                queue.append(((curr // 100) * 100 + ((curr % 100) - ((curr % 100) % 10) - 10) % 100 + curr % 10, turns + 1))
+                grid[(curr // 100) * 100 + ((curr % 100) - (curr % 10) - 10) % 100 + curr % 10] = 0
+            if grid[(curr // 1000) * 1000 + ((curr % 1000) - (curr % 100) + 100) % 1000 + curr % 100] == 1:
+                queue.append(((curr // 1000) * 1000 + ((curr % 1000) - (curr % 100) + 100) % 1000 + curr % 100, turns + 1))
+                grid[(curr // 1000) * 1000 + ((curr % 1000) - (curr % 100) + 100) % 1000 + curr % 100] = 0
+            if grid[(curr // 1000) * 1000 + ((curr % 1000) - (curr % 100) - 100) % 1000 + curr % 100] == 1:
+                queue.append(((curr // 1000) * 1000 + ((curr % 1000) - (curr % 100) - 100) % 1000 + curr % 100, turns + 1))
+                grid[(curr // 1000) * 1000 + ((curr % 1000) - (curr % 100) - 100) % 1000 + curr % 100] = 0
+            if grid[(curr // 1000 + 1) % 10 * 1000 + curr % 1000] == 1:
+                queue.append(((curr // 1000 + 1) % 10 * 1000 + curr % 1000, turns + 1))
+                grid[(curr // 1000 + 1) % 10 * 1000 + curr % 1000] = 0
+            if grid[(curr // 1000 - 1) % 10 * 1000 + curr % 1000] == 1:
+                queue.append(((curr // 1000 - 1) % 10 * 1000 + curr % 1000, turns + 1))
+                grid[(curr // 1000 - 1) % 10 * 1000 + curr % 1000] = 0
 
-            deadends.append(curr)
-            if str((int(curr[0]) + 1) % 10) + curr[1:] not in deadends:
-                queue.append((str((int(curr[0]) + 1) % 10) + curr[1:], turns + 1))
-            if str((int(curr[0]) - 1) % 10) + curr[1:] not in deadends:
-                queue.append((str((int(curr[0]) - 1) % 10) + curr[1:], turns + 1))
-            if curr[0] + str((int(curr[1]) + 1) % 10) + curr[2:] not in deadends:
-                queue.append((curr[0] + str((int(curr[1]) + 1) % 10) + curr[2:], turns + 1))
-            if curr[0] + str((int(curr[1]) - 1) % 10) + curr[2:] not in deadends:
-                queue.append((curr[0] + str((int(curr[1]) - 1) % 10) + curr[2:], turns + 1))
-            if curr[:2] + str((int(curr[2]) + 1) % 10) + curr[3:] not in deadends:
-                queue.append((curr[:2] + str((int(curr[2]) + 1) % 10) + curr[3], turns + 1))
-            if curr[:2] + str((int(curr[2]) - 1) % 10) + curr[3:] not in deadends:
-                queue.append((curr[:2] + str((int(curr[2]) - 1) % 10) + curr[3], turns + 1))
-            if curr[:3] + str((int(curr[3]) + 1) % 10) not in deadends:
-                queue.append((curr[:3] + str((int(curr[3]) + 1) % 10), turns + 1))
-            if curr[:3] + str((int(curr[3]) - 1) % 10) not in deadends:
-                queue.append((curr[:3] + str((int(curr[3]) - 1) % 10), turns + 1))
-
-        print(deadends)
         if min_turns == 40000:
             return -1
         else:
             return min_turns
 
-
-def main():
+def main():     
     sol = Solution()
     print(sol.openLock(['8888'], '0009'))
     print(sol.openLock(["0201","0101","0102","1212","2002"], '0202'))
     print(sol.openLock(deadends = ["8887","8889","8878","8898","8788","8988","7888","9888"], target = "8888"))
     print(sol.openLock(deadends = ["0000"], target = "8888"))
-
+    print(sol.openLock(["1131","1303","3113","0132","1301","1303","2200","0232","0020","2223"],"3312"))
 if __name__ == '__main__':
     main()
